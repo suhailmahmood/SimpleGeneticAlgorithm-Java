@@ -1,7 +1,7 @@
 package genetics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -14,7 +14,8 @@ public class Chromosome {
 
     /**
      * Create a chromosome containing 'length' number of genes, randomly
-     * populated. If -1 is passed as 'lenght' argument, 16 is the default length
+     * populated. If -1 is passed as 'length' argument, 16 is used which is the
+     * default chromosome length
      *
      * @param length the length of chromosome to be created. To use default
      * value, make length zero or negative
@@ -30,17 +31,43 @@ public class Chromosome {
         }
     }
 
-    /**
-     * Create a Chromosome from an array of 'Gene's.
-     *
-     * @param genes the array of 'Gene's
-     */
-    public Chromosome(Gene[] genes) {
+    public Chromosome(List<Gene> genes) {
         if (genes != null) {
-            this.genes = new ArrayList(Arrays.asList(genes));
+            this.genes = new ArrayList(genes);
+            this.chromosomeLength = genes.size();
         }
     }
 
+    public void setChromosome(List<Gene> genes) {
+        if (genes != null) {
+            if (genes.size() == chromosomeLength) {
+                this.genes = new ArrayList(genes);
+            }
+            else {
+                throw new IllegalArgumentException("length of 'genes' must equal that of target Chromosome");
+            }
+        }
+    }
+
+    public List<Gene> getGenes(int fromIndex, int toIndex) {
+        return new ArrayList<>(genes.subList(fromIndex, toIndex));
+    }
+
+    /**
+     * Set chromosome length. For new chromosome length, the following checks
+     * are performed:
+     * <p>
+     * - <tt>this.chromosomeLength > chromosomeLength</tt>: discard superfluous
+     * genes at the back
+     * </p>
+     * <p>
+     * - <tt>chromosomeLength > this.chromosomeLength</tt>: add
+     * (this.chromosomeLength - chromosomeLength) number of genes, randomly
+     * populated, at the back of the current chromosome
+     * </p>
+     *
+     * @param chromosomeLength the length to set the current chromosome to.
+     */
     public void setChromosomeLength(int chromosomeLength) {
         if (chromosomeLength > 0) {
             this.chromosomeLength = chromosomeLength;
@@ -54,17 +81,13 @@ public class Chromosome {
             }
         }
     }
+    
+    public int getChromosomeLength(){
+        return chromosomeLength;
+    }
 
-    /**
-     * Re-populate the current chromosome's genes equal to those of
-     * <code>genes</code> array.
-     *
-     * @param genes the array of 'Gene's to use to create the new Chromosome.
-     */
-    public void setChromosome(Gene[] genes) {
-        if (genes != null) {
-            this.genes = new ArrayList(Arrays.asList(genes));
-        }
+    public void setGene(int index, Gene gene) {
+        genes.set(index, gene);
     }
 
     public Gene geneAt(int index) {
@@ -92,10 +115,5 @@ public class Chromosome {
         genes.stream().forEach((g) -> chromosome.append(g));
 
         return chromosome.toString();
-    }
-    
-    public static void main(String[] args) {
-        Chromosome c = new Chromosome(10);
-        System.out.println(c.geneAt(11));
     }
 }

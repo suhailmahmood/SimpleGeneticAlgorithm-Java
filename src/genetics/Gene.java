@@ -25,9 +25,9 @@ public class Gene {
      * Constructor with value of the gene as parameter. If the argument is
      * anything other than a 0 or a 1, IllegalArgumentException is thrown.
      *
-     * @param value the value of the gene to set to
+     * @param value the value of the gene to set to.
      */
-    public Gene(short value) {
+    public Gene(int value) {
         if (value != 0 && value != 1) {
             throw new IllegalArgumentException("value must be either 0 or 1");
         }
@@ -41,13 +41,13 @@ public class Gene {
      * to 0
      */
     public void mutate() {
-        value = (short) (value == 1 ? 0 : 1);
+        value = 1 - value;
     }
 
     /**
      * Get the current gene value, the bit.
      *
-     * @return short - the current gene value, either 0 or 1.
+     * @return the current gene value, either 0 or 1.
      */
     public int value() {
         return value;

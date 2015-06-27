@@ -12,8 +12,8 @@ public class GenePool {
 
     private final List<Chromosome> genePool;
     private int chromosomeLength;
-    private double crossOverRate;
-    private double mutationRate;
+    private final double crossOverRate;
+    private final double mutationRate;
     private int[] crossPoints;
 
     /**
@@ -27,7 +27,7 @@ public class GenePool {
     public GenePool(int numOfChromosome, int chromosomeLength, double crossOverRate,
             double mutationRate) {
 
-        this.chromosomeLength = chromosomeLength;
+        this.chromosomeLength = chromosomeLength <= 0 ? 16 : chromosomeLength;
         this.crossOverRate = crossOverRate;
         this.mutationRate = mutationRate;
 
@@ -48,12 +48,13 @@ public class GenePool {
         this.chromosomeLength = chromosomeLength;
     }
 
-    public void setCrossOverRate(float crossOverRate) {
-        this.crossOverRate = crossOverRate;
-    }
-
-    public void setMutationRate(float mutationRate) {
-        this.mutationRate = mutationRate;
+    /**
+     * Get the current chromosome length.
+     *
+     * @return the current chromosome length.
+     */
+    public int getChromosomeLength() {
+        return chromosomeLength;
     }
 
     public void setCrossPoints(int[] crossPoints) {
@@ -73,9 +74,20 @@ public class GenePool {
         });
     }
 
-    public static void main(String[] args) {
-        GenePool gp = new GenePool(10, -1, 0.75, 0.05);
-        gp.displayChromosomes();
+    public Chromosome crossOver(Chromosome c1, Chromosome c2) {
+        ArrayList<Gene> geneList = new ArrayList<>();
 
+        Chromosome[] parentChromosomes = new Chromosome[2];
+        parentChromosomes[0] = c1;
+        parentChromosomes[1] = c2;
+
+        int i, start;
+        for (i = start = 0; i < crossPoints.length; i++) {
+            geneList.addAll(start, parentChromosomes[i % 2].getGenes(start, crossPoints[i]));
+            start = crossPoints[i];
+            
+        }
+        geneList.addAll(start, parentChromosomes[i % 2].getGenes(start, c1.getChromosomeLength()));
+        return new Chromosome(geneList);
     }
 }

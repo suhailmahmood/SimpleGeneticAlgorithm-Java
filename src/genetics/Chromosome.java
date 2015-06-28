@@ -49,8 +49,21 @@ public class Chromosome {
         }
     }
 
-    public List<Gene> getGenes(int fromIndex, int toIndex) {
+    public List<Gene> getChromosome() {
+        return genes;
+    }
+
+    public List<Gene> getAllele(int fromIndex, int toIndex) {
         return new ArrayList<>(genes.subList(fromIndex, toIndex));
+    }
+
+    public void setAllele(int fromIndex, List<Gene> allele) {
+
+        int lastIndex = fromIndex + allele.size();
+        for (int i = fromIndex, j = 0; i < lastIndex; i++, j++) {
+            genes.set(i, allele.get(j));
+        }
+
     }
 
     /**
@@ -81,19 +94,16 @@ public class Chromosome {
             }
         }
     }
-    
-    public int getChromosomeLength(){
+
+    public int getChromosomeLength() {
         return chromosomeLength;
     }
 
-    public void setGene(int index, Gene gene) {
+    public void setGeneAt(int index, Gene gene) {
         genes.set(index, gene);
     }
 
-    public Gene geneAt(int index) {
-        if (index < 0 || index >= genes.size()) {
-            throw new IndexOutOfBoundsException("\n\tAttempted index: " + index);
-        }
+    public Gene getGeneAt(int index) {
         return genes.get(index);
     }
 
@@ -112,7 +122,7 @@ public class Chromosome {
     public String toString() {
         StringBuilder chromosome = new StringBuilder("");
 
-        genes.stream().forEach((g) -> chromosome.append(g));
+        genes.stream().forEach((Gene g) -> chromosome.append(g));
 
         return chromosome.toString();
     }

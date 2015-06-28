@@ -62,8 +62,8 @@ public class GenePool {
             this.crossPoints = crossPoints;
 
             Arrays.sort(this.crossPoints);
-            if (this.crossPoints[0] < 1 || this.crossPoints[crossPoints.length - 1] >= this.chromosomeLength - 1) {
-                throw new IllegalArgumentException("values in the crossPoints array must be within 1 and chromosomeLength-2 inclusive");
+            if (this.crossPoints[0] < 1 || this.crossPoints[crossPoints.length - 1] >= this.chromosomeLength) {
+                throw new IllegalArgumentException("values in the crossPoints array must be\n\tbetween 1 and chromosomeLength-1 inclusive");
             }
         }
     }
@@ -76,18 +76,26 @@ public class GenePool {
 
     public Chromosome crossOver(Chromosome c1, Chromosome c2) {
         ArrayList<Gene> geneList = new ArrayList<>();
+        Chromosome newChromosome = new Chromosome(c1.getChromosomeLength());
 
         Chromosome[] parentChromosomes = new Chromosome[2];
         parentChromosomes[0] = c1;
         parentChromosomes[1] = c2;
 
-        int i, start;
-        for (i = start = 0; i < crossPoints.length; i++) {
-            geneList.addAll(start, parentChromosomes[i % 2].getGenes(start, crossPoints[i]));
-            start = crossPoints[i];
-            
+        for (int i = 0, start = 0; i <= crossPoints.length; i++) {
+            int crossPoint = i == crossPoints.length ? c1.getChromosomeLength() : crossPoints[i];
+            newChromosome.setAllele(start, parentChromosomes[i % 2].getAllele(start, crossPoint));
+            start = crossPoint;
         }
-        geneList.addAll(start, parentChromosomes[i % 2].getGenes(start, c1.getChromosomeLength()));
-        return new Chromosome(geneList);
+        return newChromosome;
+
+//        for (i = start = 0; i < crossPoints.length; i++) {
+//            geneList.addAll(start, parentChromosomes[i % 2].getAllele(start, crossPoints[i]));
+//            start = crossPoints[i];
+//        }
+//        
+//        geneList.addAll(start, parentChromosomes[i % 2].getAllele(start, c1.getChromosomeLength()));
+//        return new Chromosome(geneList);
+        
     }
 }

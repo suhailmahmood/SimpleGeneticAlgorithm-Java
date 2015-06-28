@@ -18,8 +18,9 @@ public class Test {
         System.out.println(gp.getChromosomeAt(1));
         int cp[] = {2};
         gp.setCrossPoints(cp);
-        Chromosome offspring = gp.crossOver(gp.getChromosomeAt(0), gp.getChromosomeAt(1));
-        System.out.println(offspring);
+        Chromosome[] offspring = gp.crossOver(gp.getChromosomeAt(0), gp.getChromosomeAt(1));
+        System.out.println(offspring[0]);
+        System.out.println(offspring[1]);
     }
 
 }

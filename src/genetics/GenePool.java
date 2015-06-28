@@ -104,17 +104,27 @@ public class GenePool {
      * @param c2
      * @return
      */
-    public Chromosome crossOver(Chromosome c1, Chromosome c2) {
+    public Chromosome[] crossOver(Chromosome c1, Chromosome c2) {
+
+        Chromosome[] offsprings = new Chromosome[2];
+        offsprings[0] = new Chromosome(c1.getChromosomeLength());
+        offsprings[1] = new Chromosome(c1.getChromosomeLength());
         
         Chromosome newChromosome = new Chromosome(c1.getChromosomeLength());
         Chromosome[] parentChromosomes = {c1, c2};
 
+        int selector = 0;
         for (int i = 0, start = 0; i <= crossPoints.length; i++) {
+            
             int crossPoint = i == crossPoints.length ? c1.getChromosomeLength() : crossPoints[i];
-            newChromosome.setAllele(start, parentChromosomes[i % 2].getAllele(start, crossPoint));
+            
+            offsprings[0].setAllele(start, parentChromosomes[selector].getAllele(start, crossPoint));
+            offsprings[1].setAllele(start, parentChromosomes[1 - selector].getAllele(start, crossPoint));
+            selector = 1 - selector;
             start = crossPoint;
         }
-        return newChromosome;
+        return offsprings;
+//        return newChromosome;
 
 //        for (i = start = 0; i < crossPoints.length; i++) {
 //            geneList.addAll(start, parentChromosomes[i % 2].getAllele(start, crossPoints[i]));
@@ -124,13 +134,13 @@ public class GenePool {
 //        geneList.addAll(start, parentChromosomes[i % 2].getAllele(start, c1.getChromosomeLength()));
 //        return new Chromosome(geneList);
     }
-    
+
     /**
      *
      * @param c
      */
     public void mutate(Chromosome c) {
-        
+
     }
 
     public void displayChromosomes() {

@@ -24,10 +24,11 @@ public class GADemo {
     }
 
     public static void main(String[] args) {
-        GenePool gp = new GenePool(10, -1, 0.75, 0.05);
+        GenePool gp = new GenePool(2, 6, 0.75, 0.05);
         System.out.printf("%s -> %s\n", gp.getChromosomeAt(0), gp.getChromosomeAt(0).value());
         System.out.printf("%s -> %s\n", gp.getChromosomeAt(1), gp.getChromosomeAt(1).value());
-        Chromosome c = gp.crossOver(gp.getChromosomeAt(0), gp.getChromosomeAt(1));
-        System.out.printf("%s -> %s\n", c, c.value());
+        Chromosome[] c = gp.crossOver(gp.getChromosomeAt(0), gp.getChromosomeAt(1));
+        System.out.printf("%s -> %s\n", c[0], c[0].value());
+        System.out.printf("%s -> %s\n", c[1], c[1].value());
     }
 }

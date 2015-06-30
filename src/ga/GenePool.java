@@ -1,7 +1,8 @@
-package genetics;
+package ga;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,53 +41,29 @@ public class GenePool {
         }
     }
 
-    /**
-     *
-     * @param index
-     * @return
-     */
     public Chromosome getChromosomeAt(int index) {
         return genePool.get(index);
     }
 
-    /**
-     *
-     * @param index
-     * @param c
-     */
     public void setChromosomeAt(int index, Chromosome c) {
         genePool.set(index, c);
     }
 
-    /**
-     * Get the chromosome length of the chromosomes in the gene pool.
-     *
-     * @return the current chromosome length.
-     */
     public int getChromosomeLength() {
         return chromosomeLength;
     }
 
-    /**
-     *
-     * @param chromosomeLength
-     */
     public void setChromosomeLength(int chromosomeLength) {
+        genePool.parallelStream().forEach((Chromosome c) -> {
+            c.setChromosomeLength(chromosomeLength);
+        });
         this.chromosomeLength = chromosomeLength;
     }
 
-    /**
-     *
-     * @return
-     */
     public int[] getCrossPoints() {
         return crossPoints;
     }
 
-    /**
-     *
-     * @param crossPoints
-     */
     public void setCrossPoints(int[] crossPoints) {
         if (crossPoints != null) {
             this.crossPoints = crossPoints;
@@ -98,54 +75,99 @@ public class GenePool {
         }
     }
 
-    /**
-     *
-     * @param c1
-     * @param c2
-     * @return
-     */
     public Chromosome[] crossOver(Chromosome c1, Chromosome c2) {
 
         Chromosome[] offsprings = new Chromosome[2];
         offsprings[0] = new Chromosome(c1.getChromosomeLength());
         offsprings[1] = new Chromosome(c1.getChromosomeLength());
-        
+
         Chromosome newChromosome = new Chromosome(c1.getChromosomeLength());
         Chromosome[] parentChromosomes = {c1, c2};
 
         int selector = 0;
         for (int i = 0, start = 0; i <= crossPoints.length; i++) {
-            
+
             int crossPoint = i == crossPoints.length ? c1.getChromosomeLength() : crossPoints[i];
-            
+
             offsprings[0].setAllele(start, parentChromosomes[selector].getAllele(start, crossPoint));
             offsprings[1].setAllele(start, parentChromosomes[1 - selector].getAllele(start, crossPoint));
             selector = 1 - selector;
             start = crossPoint;
         }
         return offsprings;
-//        return newChromosome;
-
-//        for (i = start = 0; i < crossPoints.length; i++) {
-//            geneList.addAll(start, parentChromosomes[i % 2].getAllele(start, crossPoints[i]));
-//            start = crossPoints[i];
-//        }
-//        
-//        geneList.addAll(start, parentChromosomes[i % 2].getAllele(start, c1.getChromosomeLength()));
-//        return new Chromosome(geneList);
     }
 
-    /**
-     *
-     * @param c
-     */
-    public void mutate(Chromosome c) {
+    public void mutate() {
+        int genePoolSize = genePool.size();
+        int totalGeneCount = genePoolSize * chromosomeLength;
+        
+        for (int i = 0; i < totalGeneCount; i++) {
+            if(Math.random() < mutationRate) {
+                genePool.get(i / genePoolSize).getGeneAt(i % genePoolSize).mutate();
+            }
+        }
 
+    }
+    
+    private int getLeastFitIndex() {
+        int index = 0;
+        int min = genePool.get(index).value();
+        int currentValue;
+        for (int i = 1; i < genePool.size(); i++) {
+            currentValue = genePool.get(i).value();
+            if(currentValue < min) {
+                index = i;
+                min = currentValue;
+            }
+        }
+        return index;
+    }
+    
+    public void saveFittest(ArrayList<Chromosome> offsprings) {
+        
+        offsprings.sort(null);
+        
+        int leastIndex;
+        for (Chromosome offspring : offsprings) {
+            leastIndex = getLeastFitIndex();
+            
+            if(offspring.value() > genePool.get(leastIndex).value()) {
+                genePool.set(leastIndex, offspring);
+            }
+        }
+    }
+
+    public void evolve(int noOfGeneration) {
+        
+        int chromosomeCount = genePool.size();
+        ArrayList<Integer> selection = new ArrayList<>();
+        int randID;
+        
+        for (int i = 0; i < chromosomeCount; i++) {
+            if (Math.random() <= crossOverRate) {
+                selection.add(i);
+            }
+        }
+        
+        if(selection.size() % 2 == 1) {
+            selection.add((int) (Math.random() * chromosomeCount));
+        }
+        
+        ArrayList<Chromosome> offsprings = new ArrayList<>();
+        for(int i=0; i<selection.size(); i+=2) {
+            offsprings.addAll(Arrays.asList(crossOver(genePool.get(i), genePool.get(i+1))));
+        }
+        
+        
     }
 
     public void displayChromosomes() {
         genePool.stream().forEach((c) -> {
             System.out.println(c + " -> " + String.valueOf(c.value()));
         });
+    }
+    
+    public void sort() {
+        genePool.sort(null);
     }
 }

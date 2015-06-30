@@ -1,4 +1,4 @@
-package genetics;
+package ga;
 
 /**
  * This is a single gene, which actually wraps a bit. Provides features to
@@ -14,8 +14,7 @@ public class Gene {
     private int value;
 
     /**
-     * Default constructor. Creates a gene with either a 0 or a 1, both having a
-     * probability of 0.5
+     * Default constructor. Creates a gene with either a 0 or a 1, set randomly.
      */
     public Gene() {
         value = Math.random() <= 0.5 ? 0 : 1;

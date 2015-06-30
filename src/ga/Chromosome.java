@@ -1,4 +1,4 @@
-package genetics;
+package ga;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author Suhail
  */
-public class Chromosome {
+public class Chromosome implements Comparable {
 
     private ArrayList<Gene> genes;
     private int chromosomeLength = 16;
@@ -125,5 +125,11 @@ public class Chromosome {
         genes.stream().forEach((Gene g) -> chromosome.append(g));
 
         return chromosome.toString();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Chromosome c = (Chromosome)o;
+        return value() - c.value();
     }
 }

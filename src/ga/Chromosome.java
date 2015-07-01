@@ -129,7 +129,7 @@ public class Chromosome implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        Chromosome c = (Chromosome)o;
+        Chromosome c = (Chromosome) o;
         return value() - c.value();
     }
 }

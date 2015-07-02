@@ -103,7 +103,7 @@ public class GenePool {
     }
 
     public void mutateGenePool() {
-        
+
         int totalGeneCount = genePoolSize * chromosomeLength;
 
         for (int i = 0; i < totalGeneCount; i++) {
@@ -131,25 +131,20 @@ public class GenePool {
 
     public void saveFittest(ArrayList<Chromosome> offsprings) {
 
+        System.out.println("Offsprings:");
+        offsprings.stream().forEach((offspring) -> {
+            System.out.println(offspring.value());
+        });
+        System.out.println("");
         // sort in ascending order
-        genePool.sort(null);
         offsprings.sort(null);
 
-        int leastIndex;
         for (int i = offsprings.size() - 1; i >= 0; i--) {
+            int leastFitIndex = getLeastFitIndex();
 
             Chromosome offspring = offsprings.get(i);
-
-            int j = 0;
-            while (genePool.get(j).value() < offspring.value()) {
-                j++;
-                if (j == genePoolSize) {
-                    break;
-                }
-            }
-
-            if (j > 0) {
-                genePool.set(j - 1, offspring);
+            if (offspring.value() > genePool.get(leastFitIndex).value()) {
+                genePool.set(leastFitIndex, offspring);
             }
             else {
                 break;
@@ -182,11 +177,14 @@ public class GenePool {
             offsprings.addAll(Arrays.asList(crossOver(genePool.get(index1), genePool.get(index2))));
         }
 
+        displayChromosomes(1);
+
         saveFittest(offsprings);
 
-        mutateGenePool();
+        displayChromosomes(2);
 
-        displayChromosomes(noOfGeneration);
+        mutateGenePool();
+        displayChromosomes(3);
 
         noOfGeneration--;
         evolve(noOfGeneration);
@@ -194,9 +192,18 @@ public class GenePool {
 
     public void displayChromosomes(int generation) {
 //        genePool.sort(null);
+        if (generation == 1) {
+            System.out.println("Before");
+        }
+        else if(generation == 2) {
+            System.out.println("After");
+        }
+        else {
+            System.out.println("MUtated");
+        }
 //        System.out.printf("Generation: %d\n", 11 - generation);
         genePool.stream().forEach((c) -> {
-            System.out.println(c + " -> " + c.value());
+            System.out.println(c.value());
         });
         System.out.println("");
     }

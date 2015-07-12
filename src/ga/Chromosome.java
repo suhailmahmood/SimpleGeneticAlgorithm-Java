@@ -10,47 +10,24 @@ import java.util.List;
 public class Chromosome implements Comparable {
 
     private ArrayList<Gene> genes;
-    private int chromosomeLength = 16;
+    private final int chromosomeLength;
 
-    /**
-     * Create a chromosome containing 'length' number of genes, randomly
-     * populated. If -1 is passed as 'length' argument, 16 is used which is the
-     * default chromosome length
-     *
-     * @param length the length of chromosome to be created. To use default
-     * value, make length zero or negative
-     */
     public Chromosome(int length) {
         this.genes = new ArrayList<>();
 
-        if (length > 0) {
-            chromosomeLength = length;
-        }
+        this.chromosomeLength = length > 0 ? length : 16;
+
         for (int i = 0; i < chromosomeLength; i++) {
             this.genes.add(i, new Gene());
         }
     }
 
-    public Chromosome(List<Gene> genes) {
-        if (genes != null) {
-            this.genes = new ArrayList(genes);
-            this.chromosomeLength = genes.size();
-        }
-    }
-
-    public void setChromosome(List<Gene> genes) {
-        if (genes != null) {
-            if (genes.size() == chromosomeLength) {
-                this.genes = new ArrayList(genes);
-            }
-            else {
-                throw new IllegalArgumentException("length of 'genes' must equal that of target Chromosome");
-            }
-        }
-    }
-
-    public List<Gene> getChromosome() {
+    public List<Gene> getGenes() {
         return genes;
+    }
+
+    public void setGenes(ArrayList<Gene> genes) {
+        this.genes = genes;
     }
 
     public List<Gene> getAllele(int fromIndex, int toIndex) {
@@ -60,38 +37,11 @@ public class Chromosome implements Comparable {
     public void setAllele(int fromIndex, List<Gene> allele) {
 
         int lastIndex = fromIndex + allele.size();
+        if (lastIndex > chromosomeLength) {
+            throw new IndexOutOfBoundsException("the allele exceeds beyond the size of the chromosome");
+        }
         for (int i = fromIndex, j = 0; i < lastIndex; i++, j++) {
             genes.set(i, allele.get(j));
-        }
-
-    }
-
-    /**
-     * Set chromosome length. For new chromosome length, the following checks
-     * are performed:
-     * <p>
-     * - <tt>this.chromosomeLength > chromosomeLength</tt>: discard superfluous
-     * genes at the back
-     * </p>
-     * <p>
-     * - <tt>chromosomeLength > this.chromosomeLength</tt>: add
-     * (this.chromosomeLength - chromosomeLength) number of genes, randomly
-     * populated, at the back of the current chromosome
-     * </p>
-     *
-     * @param chromosomeLength the length to set the current chromosome to.
-     */
-    public void setChromosomeLength(int chromosomeLength) {
-        if (chromosomeLength > 0) {
-            this.chromosomeLength = chromosomeLength;
-        }
-        if (genes.size() > chromosomeLength) {
-            genes.subList(chromosomeLength, genes.size()).clear();
-        }
-        else {
-            for (int i = genes.size(); i < chromosomeLength; i++) {
-                genes.add(new Gene());
-            }
         }
     }
 
@@ -107,12 +57,6 @@ public class Chromosome implements Comparable {
         return genes.get(index);
     }
 
-    /**
-     * The Evaluation function for the Chromosome.
-     *
-     * @return The value of this Chromosome, according to the Evaluation
-     * function.
-     */
     public int value() {
         // evaluation function goes here
         return Integer.parseInt(this.toString(), 2);

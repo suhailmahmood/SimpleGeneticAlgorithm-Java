@@ -58,13 +58,6 @@ public class GenePool {
         return chromosomeLength;
     }
 
-    public void setChromosomeLength(int chromosomeLength) {
-        genePool.parallelStream().forEach((Chromosome c) -> {
-            c.setChromosomeLength(chromosomeLength);
-        });
-        this.chromosomeLength = chromosomeLength;
-    }
-
     public int[] getCrossPoints() {
         return crossPoints;
     }

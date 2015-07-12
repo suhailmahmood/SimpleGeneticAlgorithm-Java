@@ -12,24 +12,15 @@ public class GenePool {
 
     private final List<Chromosome> genePool;
     private final int genePoolSize;
-    private int chromosomeLength;
+    private final int chromosomeLength;
     private final double crossOverRate;
     private final double mutationRate;
     private int[] crossPoints;
 
-    /**
-     * Constructor to create a gene pool, specified by the parameters. Default
-     * is a single cross-point set at half the chromosome length.
-     *
-     * @param numOfChromosome number of Chromosomes in the gene pool
-     * @param chromosomeLength length of each Chromosome in the gene pool
-     * @param crossOverRate the cross-over rate in the gene pool
-     * @param mutationRate the mutation rate in the gene pool
-     */
     public GenePool(int numOfChromosome, int chromosomeLength, double crossOverRate, double mutationRate) {
 
         this.genePoolSize = numOfChromosome;
-        this.chromosomeLength = chromosomeLength <= 0 ? 16 : chromosomeLength;
+        this.chromosomeLength = chromosomeLength > 0 ? chromosomeLength : 16;
         this.crossOverRate = crossOverRate;
         this.mutationRate = mutationRate;
 
@@ -79,7 +70,6 @@ public class GenePool {
         offsprings[0] = new Chromosome(c1.getChromosomeLength());
         offsprings[1] = new Chromosome(c1.getChromosomeLength());
 
-        Chromosome newChromosome = new Chromosome(c1.getChromosomeLength());
         Chromosome[] parentChromosomes = {c1, c2};
 
         int selector = 0;
@@ -123,26 +113,15 @@ public class GenePool {
     }
 
     public void saveFittest(ArrayList<Chromosome> offsprings) {
-
-        System.out.println("Offsprings:");
-        offsprings.stream().forEach((offspring) -> {
-            System.out.println(offspring.value());
-        });
-        System.out.println("");
         // sort in ascending order
         offsprings.sort(null);
 
-        for (int i = offsprings.size() - 1; i >= 0; i--) {
+        offsprings.stream().forEach((offspring) -> {
             int leastFitIndex = getLeastFitIndex();
-
-            Chromosome offspring = offsprings.get(i);
             if (offspring.value() > genePool.get(leastFitIndex).value()) {
                 genePool.set(leastFitIndex, offspring);
             }
-            else {
-                break;
-            }
-        }
+        });
     }
 
     public void evolve(int noOfGeneration) {
@@ -170,31 +149,20 @@ public class GenePool {
             offsprings.addAll(Arrays.asList(crossOver(genePool.get(index1), genePool.get(index2))));
         }
 
-        displayChromosomes(1);
+//        displayChromosomes();
 
         saveFittest(offsprings);
 
-        displayChromosomes(2);
+//        displayChromosomes();
 
         mutateGenePool();
-        displayChromosomes(3);
+        displayChromosomes();
 
         noOfGeneration--;
         evolve(noOfGeneration);
     }
 
-    public void displayChromosomes(int generation) {
-//        genePool.sort(null);
-        if (generation == 1) {
-            System.out.println("Before");
-        }
-        else if(generation == 2) {
-            System.out.println("After");
-        }
-        else {
-            System.out.println("MUtated");
-        }
-//        System.out.printf("Generation: %d\n", 11 - generation);
+    public void displayChromosomes() {
         genePool.stream().forEach((c) -> {
             System.out.println(c.value());
         });

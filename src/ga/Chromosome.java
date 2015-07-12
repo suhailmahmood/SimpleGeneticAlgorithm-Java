@@ -71,9 +71,22 @@ public class Chromosome implements Comparable {
         return chromosome.toString();
     }
 
+    /**
+     * Compares this Chromosome with the specified object(a Chromosome) for
+     * order. Returns a negative integer, zero, or a positive integer as the
+     * value of this Chromosome is less than, equal to, or greater than the
+     * specified chromosome. When any Collection of Chromosome objects is
+     * sorted, it is sorted in <strong>ascending order</strong>. To sort in descending order, the
+     * return statement is to be reversed.
+     *
+     * @param anotherChromosome the object(Chromosome) to be compared.
+     * @return a negative integer, zero, or a positive integer as the value of
+     * this chromosome is less than, equal to, or greater than the specified
+     * chromosome.
+     */
     @Override
-    public int compareTo(Object o) {
-        Chromosome c = (Chromosome) o;
-        return value() - c.value();
+    public int compareTo(Object anotherChromosome) {
+        Chromosome c = (Chromosome) anotherChromosome;
+        return this.value() - c.value();
     }
 }

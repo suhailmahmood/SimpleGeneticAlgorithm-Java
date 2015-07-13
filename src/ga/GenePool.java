@@ -2,7 +2,6 @@ package ga;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  *
@@ -10,7 +9,7 @@ import java.util.List;
  */
 public class GenePool {
 
-    private final List<Chromosome> genePool;
+    private final ArrayList<Chromosome> genePool;
     private final int genePoolSize;
     private final int chromosomeLength;
     private final double crossOverRate;
@@ -59,7 +58,8 @@ public class GenePool {
 
             Arrays.sort(this.crossPoints);
             if (this.crossPoints[0] < 1 || this.crossPoints[crossPoints.length - 1] >= this.chromosomeLength) {
-                throw new IllegalArgumentException("values in the crossPoints array must be\n\tbetween 1 and chromosomeLength-1 inclusive");
+                throw new IllegalArgumentException("values in the crossPoints array must be\n\tbetween 1 "
+                        + "and chromosomeLength-1 inclusive");
             }
         }
     }
@@ -89,13 +89,15 @@ public class GenePool {
 
         int totalGeneCount = genePoolSize * chromosomeLength;
 
+        System.out.println("Mutating genes:");
         for (int i = 0; i < totalGeneCount; i++) {
             double prob = Math.random();
             if (prob < mutationRate) {
-//                System.out.printf("Chromosome#: %d\tGene#: %d\n", i / chromosomeLength, i % chromosomeLength);
+                System.out.printf("Chromosome#: %d\tGene#: %d\n", i / chromosomeLength, i % chromosomeLength);
                 genePool.get(i / chromosomeLength).getGeneAt(i % chromosomeLength).mutate();
             }
         }
+        System.out.println("");
     }
 
     public int getLeastFitIndex() {
@@ -126,46 +128,57 @@ public class GenePool {
 
     public void evolve(int noOfGeneration) {
 
-        if (noOfGeneration == 0) {
-            return;
-        }
+        for (int generation = 1; generation <= noOfGeneration; generation++) {
 
-        ArrayList<Integer> selection = new ArrayList<>();
+            System.out.println("Generation :" + generation);
 
-        for (int i = 0; i < genePoolSize; i++) {
-            if (Math.random() <= crossOverRate) {
-                selection.add(i);
+            ArrayList<Integer> selection = new ArrayList<>();
+
+            for (int i = 0; i < genePoolSize; i++) {
+                if (Math.random() <= crossOverRate) {
+                    selection.add(i);
+                }
             }
+
+            if (selection.size() % 2 == 1) {
+                selection.remove(selection.size() - 1);
+            }
+
+            ArrayList<Chromosome> offsprings = new ArrayList<>();
+            for (int i = 0; i < selection.size(); i += 2) {
+                int index1 = selection.get(i);
+                int index2 = selection.get(i + 1);
+                offsprings.addAll(Arrays.asList(crossOver(genePool.get(index1), genePool.get(index2))));
+            }
+
+            System.out.println("Before saving the offsprings");
+            displayChromosomes(genePool, "GenePool");
+            displayChromosomes(offsprings, "Offsprings");
+
+            saveFittest(offsprings);
+
+            System.out.println("Before mutation:");
+            displayChromosomes(genePool, "GenePool");
+
+            mutateGenePool();
+
+            System.out.println("After mutation:");
+            displayChromosomes(genePool, "GenePool");
+
+            System.out.println("\n\n");
         }
-
-        if (selection.size() % 2 == 1) {
-            selection.remove(selection.size() - 1);
-        }
-
-        ArrayList<Chromosome> offsprings = new ArrayList<>();
-        for (int i = 0; i < selection.size(); i += 2) {
-            int index1 = selection.get(i);
-            int index2 = selection.get(i + 1);
-            offsprings.addAll(Arrays.asList(crossOver(genePool.get(index1), genePool.get(index2))));
-        }
-
-//        displayChromosomes();
-
-        saveFittest(offsprings);
-
-//        displayChromosomes();
-
-        mutateGenePool();
-        displayChromosomes();
-
-        noOfGeneration--;
-        evolve(noOfGeneration);
     }
 
-    public void displayChromosomes() {
-        genePool.stream().forEach((c) -> {
-            System.out.println(c.value());
+    public void displayChromosomes(ArrayList<Chromosome> geneList, String name) {
+        System.out.println(name);
+        if (geneList.isEmpty()) {
+            System.out.println("Empty list");
+        }
+
+        geneList.stream().forEach((c) -> {
+            System.out.println(c + " -> " + c.value());
         });
         System.out.println("");
+
     }
 }

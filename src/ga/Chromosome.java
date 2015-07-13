@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Chromosome class wraps a list of Genes. The length of the chromosome is
+ * immutable. A part of the chromosome, called an allele, as well as individual
+ * genes can be set.
  *
  * @author Suhail
  */
@@ -41,7 +44,7 @@ public class Chromosome implements Comparable {
             throw new IndexOutOfBoundsException("the allele exceeds beyond the size of the chromosome");
         }
         for (int i = fromIndex, j = 0; i < lastIndex; i++, j++) {
-            genes.set(i, allele.get(j));
+            genes.get(i).setValue(allele.get(j).getValue());
         }
     }
 
@@ -76,8 +79,8 @@ public class Chromosome implements Comparable {
      * order. Returns a negative integer, zero, or a positive integer as the
      * value of this Chromosome is less than, equal to, or greater than the
      * specified chromosome. When any Collection of Chromosome objects is
-     * sorted, it is sorted in <strong>ascending order</strong>. To sort in descending order, the
-     * return statement is to be reversed.
+     * sorted, it is sorted in <strong>ascending order</strong>. To sort in
+     * descending order, the return statement is to be reversed.
      *
      * @param anotherChromosome the object(Chromosome) to be compared.
      * @return a negative integer, zero, or a positive integer as the value of
